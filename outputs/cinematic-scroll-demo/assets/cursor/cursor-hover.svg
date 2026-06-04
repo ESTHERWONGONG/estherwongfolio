@@ -1,0 +1,23 @@
+<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow-hover" x="0" y="0" width="56" height="56" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="4.2" result="blur"></feGaussianBlur>
+    </filter>
+  </defs>
+
+  <!-- stronger outer glow -->
+  <circle cx="28" cy="28" r="16" fill="#9FE8FF" fill-opacity="0.18" filter="url(#glow-hover)"></circle>
+  <circle cx="28" cy="28" r="12.8" fill="#C9C2FF" fill-opacity="0.08" filter="url(#glow-hover)"></circle>
+
+  <!-- outer ring -->
+  <circle cx="28" cy="28" r="13" stroke="#F0FCFF" stroke-opacity="0.82" stroke-width="1.8"></circle>
+
+  <!-- inner ring -->
+  <circle cx="28" cy="28" r="7" stroke="#BFEFFF" stroke-opacity="0.42" stroke-width="1.2"></circle>
+
+  <!-- core -->
+  <circle cx="28" cy="28" r="3.2" fill="#FFFFFF"></circle>
+
+  <!-- 4-point sparkle -->
+  <path d="M28 10L29.2 14L33.2 15.2L29.2 16.4L28 20.4L26.8 16.4L22.8 15.2L26.8 14L28 10Z" fill="#F8FEFF"></path>
+</svg>

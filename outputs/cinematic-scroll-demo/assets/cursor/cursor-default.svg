@@ -1,0 +1,22 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow-default" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="3.2" result="blur"></feGaussianBlur>
+    </filter>
+  </defs>
+
+  <!-- soft outer glow -->
+  <circle cx="24" cy="24" r="12" fill="#9FE8FF" fill-opacity="0.14" filter="url(#glow-default)"></circle>
+
+  <!-- outer ring -->
+  <circle cx="24" cy="24" r="10.5" stroke="#DDF9FF" stroke-opacity="0.55" stroke-width="1.5"></circle>
+
+  <!-- inner glow -->
+  <circle cx="24" cy="24" r="5.5" fill="#BEEFFF" fill-opacity="0.18"></circle>
+
+  <!-- core -->
+  <circle cx="24" cy="24" r="2.8" fill="#F8FEFF"></circle>
+
+  <!-- tiny sparkle -->
+  <path d="M24 11.5L24.8 14.2L27.5 15L24.8 15.8L24 18.5L23.2 15.8L20.5 15L23.2 14.2L24 11.5Z" fill="#F6FBFF" fill-opacity="0.92"></path>
+</svg>

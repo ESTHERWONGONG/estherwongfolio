@@ -1,0 +1,481 @@
+/* 开始这里复制粘贴：整份覆盖 style.css */
+
+:root {
+  --lakeX: 0px;
+  --lakeY: 0px;
+  --lakeScale: 1;
+
+  --boatX: 61px;
+  --boatY: 11.5vh;
+  --boatScale: 1.55;
+  --boatOpacity: 1;
+  --boatRotate: 0deg;
+
+  --sceneX: 0px;
+  --sceneY: 0px;
+  --sceneScale: 1;
+
+  --boatDriftX: 0px;
+  --boatDriftY: 0px;
+  --boatDriftRotate: 0deg;
+
+  --ink: #f8efe6;
+  --black: #030305;
+
+  color-scheme: dark;
+}
+
+@font-face {
+  font-family: "Andale Mono Local";
+  src: url("assets/type/Andale Mono.ttf") format("truetype");
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--black);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--black);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+.top-actions {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 40;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ui-button,
+.placeholder-action,
+.jump-list button {
+  min-height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: rgba(7, 8, 13, 0.56);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.ui-button:hover,
+.placeholder-action:hover,
+.jump-list button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(20, 27, 38, 0.78);
+}
+
+.page {
+  min-height: 100vh;
+  position: relative;
+}
+
+.hero-page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.hero-scene {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
+  transform: translate(var(--sceneX), var(--sceneY)) scale(var(--sceneScale));
+  transform-origin: center center;
+  background: #02040a;
+}
+
+/* 
+  ===== lake 背景层：开始 =====
+
+  这里是湖面大背景图。
+  这次我们故意把图片引用改成 lake1.png，
+  用来测试网页到底有没有加载你新放进 assets/images 里的图片。
+
+  你需要确认文件路径是：
+  assets/images/lake1.png
+
+  如果网页还是显示旧图，说明可能是：
+  1. lake1.png 没有放到正确文件夹；
+  2. 浏览器缓存了旧 CSS / 旧图片；
+  3. HTML 或其他 CSS 里还有别的 lake 背景覆盖了这里。
+
+  可调参数：
+  --lakeX：左右移动 lake 背景
+  --lakeY：上下移动 lake 背景
+  --lakeScale：放大 / 缩小 lake 背景
+
+  background-size: cover;
+  作用：保持图片比例，同时铺满整个第一屏。
+  如果你的图片比例和屏幕比例不一致，cover 会轻微裁掉边缘，
+  但不会像 100% 100% 那样把图强行拉变形。
+*/
+.hero-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background-image: url("assets/images/lake1.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+  transform: translate(var(--lakeX), var(--lakeY)) scale(var(--lakeScale));
+  transform-origin: center center;
+
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ===== lake 背景层：结束 ===== */
+
+.boat-position {
+  position: absolute;
+  inset: auto auto 6vh 50%;
+  z-index: 5;
+  width: min(58vw, 660px);
+  aspect-ratio: 1672 / 941;
+  transform: translateX(calc(-50% + var(--boatX))) translateY(var(--boatY)) scale(var(--boatScale));
+  transform-origin: 50% 78%;
+  opacity: var(--boatOpacity);
+  will-change: transform, opacity;
+}
+
+.boat-visual {
+  position: absolute;
+  inset: 0;
+  transform: translate(var(--boatDriftX), var(--boatDriftY)) rotate(calc(var(--boatRotate) + var(--boatDriftRotate)));
+  transform-origin: 50% 78%;
+  will-change: transform;
+}
+
+.boat-layer {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.55));
+}
+
+.scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  z-index: 8;
+  margin: 0;
+  transform: translateX(-50%);
+  opacity: 1;
+
+  color: rgba(255, 246, 230, 0.98);
+  font-family: "Andale Mono Local", "Andale Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+
+  text-shadow:
+    0 0 8px rgba(255, 246, 230, 0.35),
+    0 0 18px rgba(151, 197, 255, 0.28),
+    0 2px 8px rgba(0, 0, 0, 0.72);
+
+  animation: cueGlow 1.8s ease-in-out infinite;
+}
+
+@keyframes cueGlow {
+  0%,
+  100% {
+    filter: brightness(0.3);
+    text-shadow:
+      0 0 7px rgba(255, 246, 230, 0.24),
+      0 0 14px rgba(151, 197, 255, 0.18),
+      0 2px 8px rgba(0, 0, 0, 0.72);
+  }
+
+  50% {
+    filter: brightness(0.5);
+    text-shadow:
+      0 0 10px rgba(255, 246, 230, 0.44),
+      0 0 24px rgba(151, 197, 255, 0.34),
+      0 2px 8px rgba(0, 0, 0, 0.72);
+  }
+}
+
+.circles-page {
+  min-height: 120vh;
+  background: radial-gradient(circle at 50% 20%, #1b1c26 0, #060608 48%, #020203 100%);
+  overflow: hidden;
+}
+
+.page-inner {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.circles-stage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(86px, 1fr));
+  align-items: start;
+  gap: clamp(14px, 6vw, 72px);
+  padding-top: clamp(96px, 15vh, 150px);
+}
+
+.circle-rig {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  transform-origin: 50% 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+  will-change: transform;
+}
+
+.circle-rig-002 {
+  cursor: pointer;
+}
+
+.cord {
+  display: block;
+  width: 1px;
+  height: clamp(110px, 24vh, 210px);
+  background: linear-gradient(rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.06));
+}
+
+.circle-rig img {
+  width: min(24vw, 210px);
+  min-width: 92px;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 28px 28px rgba(0, 0, 0, 0.42));
+  transition: transform 220ms ease, filter 220ms ease;
+}
+
+.circle-rig-002:hover img,
+.circle-rig-002:focus-visible img {
+  transform: scale(1.12);
+  filter: drop-shadow(0 34px 34px rgba(214, 230, 255, 0.22));
+}
+
+.static-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #153629, #372a44 55%, #0e1114);
+}
+
+.static-content {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.placeholder-action {
+  min-width: 176px;
+  min-height: 48px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(10px);
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-panel {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: min(78vh, 720px);
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 28px;
+  background: rgba(12, 14, 20, 0.94);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+
+.modal-panel h2 {
+  margin: 0 0 12px;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  letter-spacing: 0;
+}
+
+.modal-panel p {
+  color: rgba(255, 246, 230, 0.74);
+  line-height: 1.6;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.jump-list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 18px 0 0;
+  list-style: none;
+}
+
+.jump-list button {
+  width: 100%;
+  text-align: left;
+}
+
+.mini-panel {
+  width: min(760px, 100%);
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.mini-grid article {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mini-grid h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.mini-grid p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.debug-panel {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 80;
+  width: min(310px, calc(100vw - 28px));
+  max-height: calc(100vh - 28px);
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(6, 8, 12, 0.92);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.34);
+}
+
+.debug-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.debug-head span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.debug-control {
+  display: grid;
+  grid-template-columns: 92px 1fr 54px;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 0.78rem;
+}
+
+.debug-control input {
+  width: 100%;
+}
+
+#debugValues {
+  white-space: pre-wrap;
+  margin: 10px 0 0;
+  padding: 10px;
+  border-radius: 8px;
+  color: #cde3ff;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.72rem;
+}
+
+@media (max-width: 720px) {
+  .top-actions {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+  }
+
+  .ui-button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.78rem;
+  }
+
+  .boat-position {
+    width: 84vw;
+  }
+
+  .circles-stage {
+    grid-template-columns: 1fr;
+    min-height: 145vh;
+    gap: 6px;
+    padding-top: 92px;
+  }
+
+  .cord {
+    height: 84px;
+  }
+
+  .circle-rig img {
+    width: 128px;
+  }
+
+  .mini-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 结束在这里取代 */
