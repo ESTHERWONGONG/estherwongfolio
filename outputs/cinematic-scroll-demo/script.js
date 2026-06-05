@@ -527,12 +527,21 @@ document.querySelectorAll("[data-jump]").forEach((button) => {
 /* =========================================================
    【这里是顶部按钮逻辑】替换开始
    ========================================================= */
-const muteToggle = document.getElementById("muteToggle");
+const muteButton = document.querySelector(".global-mute-button");
+const muteImg = document.querySelector(".global-mute-img");
+let isMutedVisual = false;
 
-muteToggle.addEventListener("click", () => {
-  muteToggle.textContent = "No Video";
-  muteToggle.setAttribute("aria-pressed", "true");
-});
+if (muteButton && muteImg) {
+  muteButton.addEventListener("click", () => {
+    isMutedVisual = !isMutedVisual;
+
+    muteButton.setAttribute("aria-pressed", String(isMutedVisual));
+    muteImg.src = isMutedVisual
+      ? "assets/images/buttons/buttons_p1/mute_2.png"
+      : "assets/images/buttons/buttons_p1/mute_1.png";
+    muteImg.alt = isMutedVisual ? "Muted" : "Mute";
+  });
+}
 /* =========================================================
    【这里是顶部按钮逻辑】替换结束
    ========================================================= */

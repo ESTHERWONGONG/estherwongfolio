@@ -14,6 +14,12 @@
   --top-left-scale: 1;
   --top-left-opacity: 1;
 
+  --global-nav-right: 3vw;
+  --global-nav-top: var(--top-left-y);
+  --global-nav-gap: 25px;
+  --global-nav-scale: 1;
+  --global-nav-opacity: 1;
+
   --lakeX: 0px;
   --lakeY: 0px;
   --lakeScale: 1;
@@ -101,21 +107,8 @@ button {
 
 
 /* =========================================================
-   【这里是顶部按钮样式】替换开始
+   【这里是按钮样式】替换开始
    ========================================================= */
-.top-actions {
-  position: fixed;
-  top: 18px;
-  right: 18px;
-  z-index: 40;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.ui-button,
 .placeholder-action,
 .jump-list button {
   min-height: 38px;
@@ -129,7 +122,6 @@ button {
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
-.ui-button:hover,
 .placeholder-action:hover,
 .jump-list button:hover {
   transform: translateY(-1px);
@@ -137,7 +129,7 @@ button {
   background: rgba(20, 27, 38, 0.78);
 }
 /* =========================================================
-   【这里是顶部按钮样式】替换结束
+   【这里是按钮样式】替换结束
    ========================================================= */
 
 
@@ -186,7 +178,46 @@ button {
   -webkit-user-drag: none;
 }
 
-body.is-video-section .global-logo {
+.global-nav {
+  position: absolute;
+  top: var(--global-nav-top);
+  right: var(--global-nav-right);
+  z-index: 110;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--global-nav-gap);
+  transform: scale(var(--global-nav-scale));
+  transform-origin: top right;
+  opacity: var(--global-nav-opacity);
+  pointer-events: auto;
+}
+
+.global-nav-button {
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  line-height: 0;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.global-nav-button img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 42px;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+body.is-video-section .global-logo,
+body.is-video-section .global-nav {
   opacity: 0;
   pointer-events: none;
 }
@@ -827,16 +858,8 @@ body.is-video-section .global-logo {
    【这里是响应式样式】替换开始
    ========================================================= */
 @media (max-width: 720px) {
-  .top-actions {
-    left: 12px;
-    right: 12px;
-    top: 12px;
-  }
-
-  .ui-button {
-    min-height: 34px;
-    padding: 0 10px;
-    font-size: 0.78rem;
+  .global-nav-button img {
+    max-height: 34px;
   }
 
   .hero-title {
