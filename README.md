@@ -17,7 +17,7 @@ Open `index.html` through a local static server.
 
 ## Global UI Layer
 
-- The top-left logo is a single global element: `.global-logo`.
+- The bottom-left logo is a single global element: `.global-logo`.
 - The logo is fixed above ordinary pages and is controlled by `--top-left-x`, `--top-left-y`, `--top-left-scale`, and `--top-left-opacity`.
 - The right-side navigation is a single global element: `.global-nav`.
 - Global navigation contains image buttons for Personal Introduction, Portfolio, and Mute.
@@ -33,14 +33,17 @@ The page currently references these exact files:
 - `assets/images/buttons/buttons_p1/portfolio.png`
 - `assets/images/buttons/buttons_p1/mute_1.png`
 - `assets/images/buttons/buttons_p1/mute_2.png`
+- `assets/images/buttons/buttons_p1/dot.png`
 - `assets/images/lake1.png`
-- `assets/images/star.png`
 - `assets/images/title_p1.png`
 - `assets/images/boat.png`
 - `assets/images/001.svg`
 - `assets/images/002.svg`
 - `assets/images/003.svg`
 - `assets/videos/hero-video.mp4`
+- `assets/cursor/cursor-default.svg`
+- `assets/cursor/cursor-hover.svg`
+- `assets/cursor/cursor-click.svg`
 
 Source/vector backups live in `assets/source/`.
 
