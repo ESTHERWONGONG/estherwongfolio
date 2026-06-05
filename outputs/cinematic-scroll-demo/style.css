@@ -18,8 +18,8 @@
   --lakeY: 0px;
   --lakeScale: 1;
 
-  --boatX: 61px;
-  --boatY: 11.5vh;
+  --boatX: 98px;
+  --boatY: 9.5vh;
   --boatScale: 1.55;
   --boatOpacity: 1;
   --boatRotate: 0deg;
@@ -374,9 +374,27 @@ body.is-video-section .global-logo {
   max-height: 34vh;
   height: auto;
   object-fit: contain;
+  animation: titleEdgeGlow 0.5s ease-in-out 0.5s infinite alternate;
   filter:
+    brightness(0.6)
     drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
-    drop-shadow(0 0 26px rgba(150, 206, 255, 0.12));
+    drop-shadow(0 0 0 rgba(150, 206, 255, 0));
+}
+
+@keyframes titleEdgeGlow {
+  from {
+    filter:
+      brightness(0.6)
+      drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
+      drop-shadow(0 0 0 rgba(150, 206, 255, 0));
+  }
+
+  to {
+    filter:
+      brightness(0.6)
+      drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
+      drop-shadow(0 0 28px rgba(150, 206, 255, 0.2));
+  }
 }
 /* =========================================================
    【这里是page1标题图样式】替换结束

@@ -26,7 +26,7 @@ Open `index.html` through a local static server.
 
 The page currently references these exact files:
 
-- `title_p1/top-left.png`
+- `assets/images/title_p1/top-left.png`
 - `assets/images/lake1.png`
 - `assets/images/star.png`
 - `assets/images/title_p1.png`
