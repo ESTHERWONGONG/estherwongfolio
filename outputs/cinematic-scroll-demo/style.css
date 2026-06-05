@@ -9,14 +9,14 @@
    【这里是全局变量】替换开始
    ========================================================= */
 :root {
-  --top-left-x: 3vw;
-  --top-left-y: 4vh;
-  --top-left-scale: 1;
+  --top-left-x: 30px;
+  --top-left-y: calc(4vh - 17px);
+  --top-left-scale: 1.087;
   --top-left-opacity: 1;
 
-  --global-nav-right: 3vw;
+  --global-nav-right: 30px;
   --global-nav-top: var(--top-left-y);
-  --global-nav-gap: 25px;
+  --global-nav-gap: 20px;
   --global-nav-scale: 1;
   --global-nav-opacity: 1;
 
@@ -211,6 +211,16 @@ button {
   width: auto;
   height: auto;
   max-height: 42px;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.global-nav-divider {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 18px;
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
