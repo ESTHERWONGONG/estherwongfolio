@@ -9,6 +9,11 @@
    【这里是全局变量】替换开始
    ========================================================= */
 :root {
+  --top-left-x: 3vw;
+  --top-left-y: 4vh;
+  --top-left-scale: 1;
+  --top-left-opacity: 1;
+
   --lakeX: 0px;
   --lakeY: 0px;
   --lakeScale: 1;
@@ -155,6 +160,38 @@ button {
 }
 /* =========================================================
    【这里是page1页面容器】替换结束
+   ========================================================= */
+
+
+/* =========================================================
+   【这里是Global UI Layer】替换开始
+   ========================================================= */
+.global-ui-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.global-logo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(96px, 10.3vw, 198px);
+  height: auto;
+  transform: translate(var(--top-left-x), var(--top-left-y)) scale(var(--top-left-scale));
+  transform-origin: center center;
+  opacity: var(--top-left-opacity);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body.is-video-section .global-logo {
+  opacity: 0;
+  pointer-events: none;
+}
+/* =========================================================
+   【这里是Global UI Layer】替换结束
    ========================================================= */
 
 
@@ -701,13 +738,30 @@ button {
   margin-bottom: 10px;
 }
 
-.debug-head span {
+.debug-collapse {
   display: grid;
   place-items: center;
   width: 24px;
   height: 24px;
+  border: 0;
   border-radius: 6px;
+  color: var(--ink);
   background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+
+.debug-panel[data-collapsed="true"] {
+  width: auto;
+  overflow: hidden;
+}
+
+.debug-panel[data-collapsed="true"] .debug-head {
+  margin-bottom: 0;
+}
+
+.debug-panel[data-collapsed="true"] .debug-controls,
+.debug-panel[data-collapsed="true"] #debugValues {
+  display: none;
 }
 
 .debug-control {
@@ -717,6 +771,20 @@ button {
   align-items: center;
   margin: 8px 0;
   font-size: 0.78rem;
+}
+
+.debug-group {
+  min-width: 0;
+  margin: 10px 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.debug-group legend {
+  padding: 0 6px;
+  color: rgba(255, 246, 230, 0.86);
+  font-size: 0.72rem;
 }
 
 .debug-control input {

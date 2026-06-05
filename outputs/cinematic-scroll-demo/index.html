@@ -21,6 +21,10 @@
       <button class="ui-button" id="muteToggle" aria-pressed="true">Mute</button>
     </div>
 
+    <div class="global-ui-layer" aria-label="Global UI">
+      <img class="global-logo" src="title_p1/top-left.png" alt="Lumière Studio" />
+    </div>
+
     <main id="smooth-wrapper">
       <section class="page hero-page" id="page1" aria-label="Hero scene">
         <div class="hero-scene">
@@ -101,7 +105,7 @@
     <aside class="debug-panel" id="debugPanel">
       <div class="debug-head">
         <strong>Alignment</strong>
-        <span>D</span>
+        <button class="debug-collapse" id="debugCollapse" type="button" aria-expanded="true" aria-controls="debugControls debugValues">−</button>
       </div>
       <div class="debug-controls" id="debugControls"></div>
       <pre id="debugValues"></pre>

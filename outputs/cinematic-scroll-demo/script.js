@@ -128,6 +128,10 @@ let heroVideoStarted = false;
 let heroVideoEnded = false;
 let heroInitialStateVisible = true;
 
+function setVideoSection(active) {
+  document.body.classList.toggle("is-video-section", active);
+}
+
 function playHeroVideo() {
   if (heroVideoStarted || reduceMotion) return;
 
@@ -190,6 +194,7 @@ heroVideo.addEventListener("ended", () => {
    - 解决问题 2：回到 page1 顶部时，标题图重新显示。
    ========================================================= */
 function resetHeroToInitialState() {
+  setVideoSection(false);
   resetHeroVideo();
 
   gsap.set(".hero-scene", {
@@ -279,6 +284,8 @@ const heroTl = gsap.timeline({
         leaveHeroInitialState();
       }
 
+      setVideoSection(self.progress >= 0.24 && self.progress < 0.985);
+
       // 向下滚动才播放视频
       if (self.progress > 0.34 && self.direction > 0) {
         playHeroVideo();
@@ -287,9 +294,14 @@ const heroTl = gsap.timeline({
       // 靠近开头时，视频重置
       if (self.progress < 0.08) {
         resetHeroVideo();
+        setVideoSection(false);
         gsap.set(".hero-video-layer", { opacity: 0 });
         gsap.set(".hero-scene", { opacity: 1 });
       }
+    },
+
+    onLeave: () => {
+      setVideoSection(false);
     },
 
     // 从 page2 滚回 page1
@@ -298,6 +310,7 @@ const heroTl = gsap.timeline({
     },
 
     onLeaveBack: () => {
+      setVideoSection(false);
       resetHeroToInitialState();
     },
   },
@@ -528,6 +541,13 @@ muteToggle.addEventListener("click", () => {
 /* =========================================================
    【这里是debug参数配置】替换开始
    ========================================================= */
+const topLeftLogoDebugConfig = [
+  { label: "x", name: "top-left-x", min: 0, max: 30, step: 0.1, unit: "vw" },
+  { label: "y", name: "top-left-y", min: 0, max: 20, step: 0.1, unit: "vh" },
+  { label: "scale", name: "top-left-scale", min: 0.3, max: 2, step: 0.01, unit: "" },
+  { label: "opacity", name: "top-left-opacity", min: 0, max: 1, step: 0.01, unit: "" },
+];
+
 const debugConfig = [
   { name: "lakeX", min: -700, max: 700, step: 1, unit: "px" },
   { name: "lakeY", min: -400, max: 400, step: 1, unit: "px" },
@@ -562,9 +582,15 @@ function setCssVar(name, value, unit) {
 }
 
 function renderDebugValues() {
-  document.getElementById("debugValues").textContent = debugConfig
+  const topLeftValues = topLeftLogoDebugConfig
     .map(({ name }) => `--${name}: ${cssVar(name)};`)
     .join("\n");
+
+  const existingValues = debugConfig
+    .map(({ name }) => `--${name}: ${cssVar(name)};`)
+    .join("\n");
+
+  document.getElementById("debugValues").textContent = `${topLeftValues}\n\n${existingValues}`;
 }
 
 function numberVar(name) {
@@ -579,6 +605,50 @@ function numberVar(name) {
    【这里是debug面板渲染】替换开始
    ========================================================= */
 const controls = document.getElementById("debugControls");
+const debugCollapse = document.getElementById("debugCollapse");
+
+function setDebugCollapsed(collapsed) {
+  debugPanel.dataset.collapsed = String(collapsed);
+  debugCollapse.textContent = collapsed ? "+" : "−";
+  debugCollapse.setAttribute("aria-expanded", String(!collapsed));
+}
+
+debugCollapse.addEventListener("click", () => {
+  setDebugCollapsed(debugPanel.dataset.collapsed !== "true");
+});
+
+const topLeftGroup = document.createElement("fieldset");
+topLeftGroup.className = "debug-group";
+
+const topLeftLegend = document.createElement("legend");
+topLeftLegend.textContent = "Top Left Logo";
+topLeftGroup.append(topLeftLegend);
+
+topLeftLogoDebugConfig.forEach(({ label, name, min, max, step, unit }) => {
+  const row = document.createElement("label");
+  row.className = "debug-control";
+
+  const input = document.createElement("input");
+  const value = document.createElement("span");
+
+  input.type = "range";
+  input.min = min;
+  input.max = max;
+  input.step = step;
+  input.value = Number.parseFloat(cssVar(name));
+  value.textContent = cssVar(name);
+
+  input.addEventListener("input", () => {
+    setCssVar(name, input.value, unit);
+    value.textContent = `${input.value}${unit}`;
+    renderDebugValues();
+  });
+
+  row.append(label, input, value);
+  topLeftGroup.append(row);
+});
+
+controls.append(topLeftGroup);
 
 debugConfig.forEach(({ name, min, max, step, unit }) => {
   const row = document.createElement("label");
