@@ -1,5 +1,13 @@
-/* 开始这里复制粘贴：整份覆盖 style.css */
+/* =========================================================
+   style.css
+   结构说明：
+   - 以后不要整份重写时，就按下面的“替换开始 / 替换结束”区块替换。
+   - 全局 / page1 / page2 / page3 / modal / debug / responsive 都已经拆开。
+   ========================================================= */
 
+/* =========================================================
+   【这里是全局变量】替换开始
+   ========================================================= */
 :root {
   --lakeX: 0px;
   --lakeY: 0px;
@@ -24,13 +32,27 @@
 
   color-scheme: dark;
 }
+/* =========================================================
+   【这里是全局变量】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是字体】替换开始
+   ========================================================= */
 @font-face {
   font-family: "Andale Mono Local";
   src: url("assets/type/Andale Mono.ttf") format("truetype");
   font-display: swap;
 }
+/* =========================================================
+   【这里是字体】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是基础样式】替换开始
+   ========================================================= */
 * {
   box-sizing: border-box;
 }
@@ -52,6 +74,30 @@ button {
   font: inherit;
 }
 
+.svg-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.page {
+  min-height: 100vh;
+  position: relative;
+}
+
+.page-inner {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+}
+/* =========================================================
+   【这里是基础样式】替换结束
+   ========================================================= */
+
+
+/* =========================================================
+   【这里是顶部按钮样式】替换开始
+   ========================================================= */
 .top-actions {
   position: fixed;
   top: 18px;
@@ -85,12 +131,14 @@ button {
   border-color: rgba(255, 255, 255, 0.55);
   background: rgba(20, 27, 38, 0.78);
 }
+/* =========================================================
+   【这里是顶部按钮样式】替换结束
+   ========================================================= */
 
-.page {
-  min-height: 100vh;
-  position: relative;
-}
 
+/* =========================================================
+   【这里是page1页面容器】替换开始
+   ========================================================= */
 .hero-page {
   height: 100vh;
   overflow: hidden;
@@ -105,52 +153,259 @@ button {
   transform-origin: center center;
   background: #02040a;
 }
+/* =========================================================
+   【这里是page1页面容器】替换结束
+   ========================================================= */
 
-/* 
-  ===== lake 背景层：开始 =====
 
-  这里是湖面大背景图。
-  这次我们故意把图片引用改成 lake1.png，
-  用来测试网页到底有没有加载你新放进 assets/images 里的图片。
-
-  你需要确认文件路径是：
-  assets/images/lake1.png
-
-  如果网页还是显示旧图，说明可能是：
-  1. lake1.png 没有放到正确文件夹；
-  2. 浏览器缓存了旧 CSS / 旧图片；
-  3. HTML 或其他 CSS 里还有别的 lake 背景覆盖了这里。
-
-  可调参数：
-  --lakeX：左右移动 lake 背景
-  --lakeY：上下移动 lake 背景
-  --lakeScale：放大 / 缩小 lake 背景
-
-  background-size: cover;
-  作用：保持图片比例，同时铺满整个第一屏。
-  如果你的图片比例和屏幕比例不一致，cover 会轻微裁掉边缘，
-  但不会像 100% 100% 那样把图强行拉变形。
-*/
+/* =========================================================
+   【这里是page1湖面背景】替换开始
+   图片路径：assets/images/lake1.png
+   ========================================================= */
 .hero-scene::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -8vh -8vw;
   z-index: 0;
 
+  background-color: #06102a;
   background-image: url("assets/images/lake1.png");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
 
-  transform: translate(var(--lakeX), var(--lakeY)) scale(var(--lakeScale));
+  transform: translate(var(--lakeX), var(--lakeY)) scale(calc(var(--lakeScale) * 1.04));
   transform-origin: center center;
 
   pointer-events: none;
-  will-change: transform;
+  will-change: transform, filter;
+
+  animation:
+    lakeDrift 60s linear infinite,
+    lakeGlow 16s steps(5, end) infinite alternate;
+
+  filter: url("#ripple") brightness(0.2);
 }
 
-/* ===== lake 背景层：结束 ===== */
+@keyframes lakeDrift {
+  0% {
+    transform: translate(calc(var(--lakeX) - 50px), var(--lakeY)) scale(calc(var(--lakeScale) * 1.04));
+  }
 
+  50% {
+    transform: translate(calc(var(--lakeX) + 50px), var(--lakeY)) scale(calc(var(--lakeScale) * 1.04));
+  }
+
+  100% {
+    transform: translate(calc(var(--lakeX) - 50px), var(--lakeY)) scale(calc(var(--lakeScale) * 1.04));
+  }
+}
+
+@keyframes lakeGlow {
+  0% {
+    filter: url("#ripple") brightness(0.2);
+  }
+
+  5% {
+    filter: url("#ripple") brightness(0.25);
+  }
+
+  10% {
+    filter: url("#ripple") brightness(0.3);
+  }
+
+  15% {
+    filter: url("#ripple") brightness(0.35);
+  }
+
+  20% {
+    filter: url("#ripple") brightness(0.4);
+  }
+
+  25% {
+    filter: url("#ripple") brightness(0.45);
+  }
+
+  30% {
+    filter: url("#ripple") brightness(0.5);
+  }
+
+  35% {
+    filter: url("#ripple") brightness(0.55);
+  }
+
+  40% {
+    filter: url("#ripple") brightness(0.6);
+  }
+
+  45% {
+    filter: url("#ripple") brightness(0.65);
+  }
+
+  50% {
+    filter: url("#ripple") brightness(0.7);
+  }
+
+  55% {
+    filter: url("#ripple") brightness(0.65);
+  }
+
+  60% {
+    filter: url("#ripple") brightness(0.6);
+  }
+
+  65% {
+    filter: url("#ripple") brightness(0.55);
+  }
+
+  70% {
+    filter: url("#ripple") brightness(0.5);
+  }
+
+  75% {
+    filter: url("#ripple") brightness(0.45);
+  }
+
+  80% {
+    filter: url("#ripple") brightness(0.4);
+  }
+
+  85% {
+    filter: url("#ripple") brightness(0.35);
+  }
+
+  90% {
+    filter: url("#ripple") brightness(0.3);
+  }
+
+  95% {
+    filter: url("#ripple") brightness(0.25);
+  }
+
+  100% {
+    filter: url("#ripple") brightness(0.2);
+  }
+}
+/* =========================================================
+   【这里是page1湖面背景】替换结束
+   ========================================================= */
+
+
+/* =========================================================
+   【这里是page1视频层样式】替换开始
+   ========================================================= */
+.hero-video-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #02040a;
+  will-change: opacity;
+}
+
+.hero-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* =========================================================
+   【这里是page1视频层样式】替换结束
+   ========================================================= */
+
+
+/* =========================================================
+   【这里是page1标题图样式】替换开始
+   图片路径：assets/images/title_p1.png
+   ========================================================= */
+.hero-title-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  padding: 0 24px;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.hero-title {
+  display: block;
+  width: min(72vw, 820px);
+  max-height: 34vh;
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
+    drop-shadow(0 0 26px rgba(150, 206, 255, 0.12));
+}
+/* =========================================================
+   【这里是page1标题图样式】替换结束
+   ========================================================= */
+
+
+/* =========================================================
+   【这里是page1雪花样式】替换开始
+   ========================================================= */
+.snow-layer {
+  position: absolute;
+  inset: -10% -6vw 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  top: -8%;
+  left: var(--left);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 999px;
+  opacity: var(--opacity);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.52) 48%, rgba(255, 255, 255, 0) 76%);
+  filter: blur(var(--blur));
+  will-change: transform, opacity;
+  animation: snowFall var(--duration) linear var(--delay) infinite;
+}
+
+@keyframes snowFall {
+  0% {
+    transform: translate3d(0, -6vh, 0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: var(--opacity);
+  }
+
+  25% {
+    transform: translate3d(calc(var(--drift) * 0.35), 25vh, 0);
+  }
+
+  50% {
+    transform: translate3d(calc(var(--drift) * -0.2), 52vh, 0);
+  }
+
+  75% {
+    transform: translate3d(var(--drift), 78vh, 0);
+  }
+
+  100% {
+    transform: translate3d(calc(var(--drift) * 0.15), 112vh, 0);
+    opacity: 0;
+  }
+}
+/* =========================================================
+   【这里是page1雪花样式】替换结束
+   ========================================================= */
+
+
+/* =========================================================
+   【这里是page1船样式】替换开始
+   ========================================================= */
 .boat-position {
   position: absolute;
   inset: auto auto 6vh 50%;
@@ -177,7 +432,14 @@ button {
   height: auto;
   filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.55));
 }
+/* =========================================================
+   【这里是page1船样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是page1滚动提示样式】替换开始
+   ========================================================= */
 .scroll-cue {
   position: absolute;
   left: 50%;
@@ -219,16 +481,18 @@ button {
       0 2px 8px rgba(0, 0, 0, 0.72);
   }
 }
+/* =========================================================
+   【这里是page1滚动提示样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是page2页面样式】替换开始
+   ========================================================= */
 .circles-page {
   min-height: 120vh;
   background: radial-gradient(circle at 50% 20%, #1b1c26 0, #060608 48%, #020203 100%);
   overflow: hidden;
-}
-
-.page-inner {
-  width: min(1120px, calc(100% - 32px));
-  margin: 0 auto;
 }
 
 .circles-stage {
@@ -239,7 +503,14 @@ button {
   gap: clamp(14px, 6vw, 72px);
   padding-top: clamp(96px, 15vh, 150px);
 }
+/* =========================================================
+   【这里是page2页面样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是page2圆形摆件样式】替换开始
+   ========================================================= */
 .circle-rig {
   position: relative;
   display: grid;
@@ -276,7 +547,14 @@ button {
   transform: scale(1.12);
   filter: drop-shadow(0 34px 34px rgba(214, 230, 255, 0.22));
 }
+/* =========================================================
+   【这里是page2圆形摆件样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是page3页面样式】替换开始
+   ========================================================= */
 .static-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #153629, #372a44 55%, #0e1114);
@@ -293,7 +571,14 @@ button {
   min-height: 48px;
   background: rgba(255, 255, 255, 0.12);
 }
+/* =========================================================
+   【这里是page3页面样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是modal弹窗样式】替换开始
+   ========================================================= */
 .modal {
   position: fixed;
   inset: 0;
@@ -385,7 +670,14 @@ button {
   margin: 0;
   font-size: 0.9rem;
 }
+/* =========================================================
+   【这里是modal弹窗样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是debug面板样式】替换开始
+   ========================================================= */
 .debug-panel {
   position: fixed;
   left: 14px;
@@ -440,7 +732,14 @@ button {
   background: rgba(255, 255, 255, 0.07);
   font-size: 0.72rem;
 }
+/* =========================================================
+   【这里是debug面板样式】替换结束
+   ========================================================= */
 
+
+/* =========================================================
+   【这里是响应式样式】替换开始
+   ========================================================= */
 @media (max-width: 720px) {
   .top-actions {
     left: 12px;
@@ -452,6 +751,11 @@ button {
     min-height: 34px;
     padding: 0 10px;
     font-size: 0.78rem;
+  }
+
+  .hero-title {
+    width: min(84vw, 460px);
+    max-height: 28vh;
   }
 
   .boat-position {
@@ -477,5 +781,6 @@ button {
     grid-template-columns: 1fr;
   }
 }
-
-/* 结束在这里取代 */
+/* =========================================================
+   【这里是响应式样式】替换结束
+   ========================================================= */
