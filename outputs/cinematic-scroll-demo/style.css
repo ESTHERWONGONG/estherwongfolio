@@ -865,6 +865,69 @@ body.is-video-section .global-nav {
 
 
 /* =========================================================
+   【这里是全局自定义鼠标】替换开始
+   ========================================================= */
+/* 1. 默认状态：普通移动 */
+html,
+body,
+body * {
+  cursor: url("assets/cursor/cursor-default.svg") 16 16, auto !important;
+}
+
+/* 2. Hover 状态：所有可点击/可交互元素 */
+a,
+a *,
+button,
+button *,
+[role="button"],
+[role="button"] *,
+input,
+textarea,
+select,
+label,
+summary,
+[onclick],
+[onclick] *,
+.clickable,
+.clickable *,
+.interactive,
+.interactive *,
+[data-clickable="true"],
+[data-clickable="true"] * {
+  cursor: url("assets/cursor/cursor-hover.svg") 16 16, pointer !important;
+}
+
+/* 3. Click / Press 状态：鼠标按下时 */
+html:active,
+body:active,
+body:active *,
+a:active,
+a:active *,
+button:active,
+button:active *,
+[role="button"]:active,
+[role="button"]:active *,
+input:active,
+textarea:active,
+select:active,
+label:active,
+summary:active,
+[onclick]:active,
+[onclick]:active *,
+.clickable:active,
+.clickable:active *,
+.interactive:active,
+.interactive:active *,
+[data-clickable="true"]:active,
+[data-clickable="true"]:active * {
+  cursor: url("assets/cursor/cursor-click.svg") 16 16, pointer !important;
+}
+/* =========================================================
+   【这里是全局自定义鼠标】替换结束
+   ========================================================= */
+
+
+/* =========================================================
    【这里是响应式样式】替换开始
    ========================================================= */
 @media (max-width: 720px) {

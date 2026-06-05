@@ -701,14 +701,14 @@ function initSnow() {
   snowLayer.className = "snow-layer";
   snowLayer.setAttribute("aria-hidden", "true");
 
-  const SNOW_COUNT = reduceMotion ? 8 : 18;
+  const SNOW_COUNT = reduceMotion ? 10 : 23;
 
   for (let i = 0; i < SNOW_COUNT; i += 1) {
     const flake = document.createElement("span");
     flake.className = "snowflake";
 
     const random = Math.random;
-    const size = (2 + random() * 4).toFixed(1);
+    const size = ((2 + random() * 4) * 2).toFixed(1);
     const duration = (10 + random() * 8).toFixed(1);
     const delay = (-random() * 18).toFixed(1);
     const drift = (14 + random() * 42).toFixed(1);
