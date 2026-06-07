@@ -17,11 +17,11 @@
   --global-nav-right: 30px;
   --global-nav-top: calc(4vh - 17px);
   --global-nav-gap: 20px;
-  --global-nav-scale: 1;
+  --global-nav-scale: 0.8;
   --global-nav-opacity: 1;
 
   --scroll-down-bottom: 24px;
-  --scroll-down-scale: 1;
+  --scroll-down-scale: 0.75;
   --scroll-down-opacity: 1;
 
   --lakeX: 0px;
