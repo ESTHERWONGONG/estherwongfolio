@@ -11,8 +11,9 @@ Open `index.html` through a local static server.
 
 ## Active Pages
 
-- Page 1: simplified pinned hero scene prepared for the next scroll-driven video direction.
-- Page 2-6: blank full-screen sections reserved for the next scroll-driven video structure.
+- Page 1: pinned scroll-driven video test mapping `0s` to `5s`.
+- Page 2: full-screen test section that begins after Page 1 reaches the `5s` video frame.
+- Page 3-6: blank full-screen sections reserved for the next scroll-driven video structure.
 
 ## Global UI Layer
 
@@ -36,6 +37,7 @@ The page currently references these exact files:
 - `assets/images/buttons/buttons_whole/scrolldown.png`
 - `assets/images/lake1.png`
 - `assets/images/title_p1.png`
+- `assets/videos/hero-scroll-video.mp4`
 - `assets/cursor/cursor-default.svg`
 - `assets/cursor/cursor-hover.svg`
 - `assets/cursor/cursor-click.svg`

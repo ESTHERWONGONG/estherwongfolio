@@ -12,28 +12,55 @@ gsap.registerPlugin(ScrollTrigger);
    【这里是全局滚动初始化】替换开始
    ========================================================= */
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const ENABLE_PAGE1_VIDEO_SCRUB = true;
+const ENABLE_PAGE1_ZOOM = false;
+const ENABLE_PAGE1_THREE = false;
+const ENABLE_LENIS_FOR_VIDEO_TEST = false;
+const VIDEO_PATH = "assets/videos/hero-scroll-video.mp4";
+const PAGE_1_VIDEO_START = 0;
+const PAGE_1_VIDEO_END = 5;
+const PAGE_2_VIDEO_START = 5;
+const PAGE_2_VIDEO_END = 10;
+const PAGE_1_SCROLL_LENGTH = "400vh";
+const PAGE_1_ZOOM_AMOUNT = 0.06;
 
-const lenis = new Lenis({
-  duration: reduceMotion ? 0.2 : 1.35,
-  smoothWheel: true,
-  lerp: 0.08,
-});
+document.body.classList.toggle("is-page1-video-test", ENABLE_PAGE1_VIDEO_SCRUB);
+document.documentElement.dataset.page1VideoScrub = String(ENABLE_PAGE1_VIDEO_SCRUB);
+document.documentElement.dataset.page1Zoom = String(ENABLE_PAGE1_ZOOM);
+document.documentElement.dataset.page1Three = String(ENABLE_PAGE1_THREE);
+document.documentElement.dataset.lenisActive = String(ENABLE_LENIS_FOR_VIDEO_TEST);
 
-lenis.on("scroll", ScrollTrigger.update);
+let lenis = null;
 
-gsap.ticker.add((time) => {
-  lenis.raf(time * 1000);
-});
+if (ENABLE_LENIS_FOR_VIDEO_TEST) {
+  lenis = new Lenis({
+    duration: reduceMotion ? 0.2 : 0.75,
+    smoothWheel: true,
+    lerp: 0.12,
+  });
+
+  lenis.on("scroll", ScrollTrigger.update);
+
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+}
 
 gsap.ticker.lagSmoothing(0);
 
-window.addEventListener("scroll", () => {
-  const progress = Math.min(window.scrollY / window.innerHeight, 1);
-  const lakeScale = 1 + progress * 0.05;
-  document.documentElement.style.setProperty("--lakeScale", lakeScale.toFixed(3));
-});
+if (ENABLE_PAGE1_ZOOM) {
+  window.addEventListener("scroll", () => {
+    const progress = Math.min(window.scrollY / window.innerHeight, 1);
+    const lakeScale = 1 + progress * 0.05;
+    document.documentElement.style.setProperty("--lakeScale", lakeScale.toFixed(3));
+  });
+}
 
 const debugPanel = document.getElementById("debugPanel");
+let heroTl = null;
+let targetVideoTime = PAGE_1_VIDEO_START;
+let currentVideoTime = PAGE_1_VIDEO_START;
+let videoRafId = null;
 /* =========================================================
    【这里是全局滚动初始化】替换结束
    ========================================================= */
@@ -43,6 +70,8 @@ const debugPanel = document.getElementById("debugPanel");
    【这里是page1根节点】替换开始
    ========================================================= */
 const heroPage = document.querySelector("#page1");
+const heroScene = document.querySelector(".hero-scene");
+const heroScrollVideo = document.querySelector(".hero-scroll-video");
 /* =========================================================
    【这里是page1根节点】替换结束
    ========================================================= */
@@ -96,122 +125,174 @@ function hideHeroTitle() {
   });
 }
 
-showHeroTitle();
+if (!ENABLE_PAGE1_VIDEO_SCRUB) {
+  showHeroTitle();
+}
 /* =========================================================
    【这里是page1标题图层】替换结束
    ========================================================= */
 
 
 /* =========================================================
-   【这里是page1初始状态重置】替换开始
-   说明：回到 page1 顶部时，标题图重新显示。
+   【这里是page1滚动驱动视频】替换开始
    ========================================================= */
-let heroInitialStateVisible = true;
-
-function resetHeroToInitialState() {
-  gsap.set(".hero-scene", {
-    opacity: 1,
-  });
-
-  gsap.set(".hero-title-layer", {
-    opacity: 1,
-    y: 0,
-  });
-
-  showHeroTitle();
-
-  heroInitialStateVisible = true;
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
 
-function leaveHeroInitialState() {
-  if (!heroInitialStateVisible) return;
-
-  heroInitialStateVisible = false;
-  hideHeroTitle();
+function scrollLengthToPixels(value) {
+  if (typeof value === "number") return value;
+  if (value.endsWith("vh")) {
+    return (Number.parseFloat(value) / 100) * window.innerHeight;
+  }
+  if (value.endsWith("px")) {
+    return Number.parseFloat(value);
+  }
+  return window.innerHeight * 4;
 }
-/* =========================================================
-   【这里是page1初始状态重置】替换结束
-   ========================================================= */
 
-/* =========================================================
-   【这里是page1滚动动画时间线】替换开始
-   说明：
-   - page1 pin 住。
-   - 湖面场景轻微放大。
-   - 标题淡出。
-   - 从 page2 往回滚时，直接跳回 page1 初始画面。
-   ========================================================= */
+function waitForVideoMetadata(video) {
+  if (video.readyState >= 1) {
+    return Promise.resolve();
+  }
 
-let isJumpingBackToHeroStart = false;
-
-function jumpBackToHeroStart() {
-  if (isJumpingBackToHeroStart) return;
-
-  isJumpingBackToHeroStart = true;
-
-  resetHeroToInitialState();
-
-  const heroTop = heroPage.getBoundingClientRect().top + window.scrollY;
-
-  gsap.set(".hero-scene", { opacity: 1 });
-  gsap.set(".hero-title-layer", { opacity: 1, y: 0 });
-  showHeroTitle();
-
-  // 立即跳回 page1 顶部
-  lenis.scrollTo(heroTop, { duration: 0.01, immediate: true });
-  window.scrollTo(0, heroTop);
-
-  requestAnimationFrame(() => {
-    isJumpingBackToHeroStart = false;
+  return new Promise((resolve) => {
+    video.addEventListener("loadedmetadata", resolve, { once: true });
   });
 }
 
-const heroTl = gsap.timeline({
-  scrollTrigger: {
-    trigger: "#page1",
-    start: "top top",
-    end: "+=280%",
-    scrub: 1.15,
-    pin: true,
-    anticipatePin: 1,
+function getVideoMaxTime(video) {
+  return Number.isFinite(video.duration) ? Math.min(video.duration, PAGE_2_VIDEO_END) : PAGE_2_VIDEO_END;
+}
 
-    onUpdate: (self) => {
-      if (isJumpingBackToHeroStart) return;
+function clampVideoTime(video, time) {
+  return clamp(time, 0, getVideoMaxTime(video));
+}
 
-      // 滚回顶部，直接恢复初始状态
-      if (self.progress <= 0.015) {
-        resetHeroToInitialState();
-        return;
-      }
+function setVideoTime(video, time) {
+  const safeTime = clampVideoTime(video, time);
+  targetVideoTime = safeTime;
+  currentVideoTime = safeTime;
+  video.currentTime = safeTime;
+}
 
-      // 离开第一页初始状态，标题淡出
-      if (self.progress > 0.04) {
-        leaveHeroInitialState();
-      }
+function updateVideoTime() {
+  if (!heroScrollVideo || !Number.isFinite(heroScrollVideo.duration)) {
+    videoRafId = requestAnimationFrame(updateVideoTime);
+    return;
+  }
 
-      if (self.progress < 0.08) {
-        gsap.set(".hero-scene", { opacity: 1 });
-      }
+  currentVideoTime += (targetVideoTime - currentVideoTime) * 0.25;
+  currentVideoTime = clampVideoTime(heroScrollVideo, currentVideoTime);
+
+  if (Math.abs(heroScrollVideo.currentTime - currentVideoTime) > 0.03) {
+    heroScrollVideo.currentTime = currentVideoTime;
+  }
+
+  document.documentElement.dataset.targetVideoTime = targetVideoTime.toFixed(3);
+  document.documentElement.dataset.currentVideoTime = currentVideoTime.toFixed(3);
+
+  videoRafId = requestAnimationFrame(updateVideoTime);
+}
+
+function startVideoTimeLoop() {
+  if (videoRafId !== null) return;
+  videoRafId = requestAnimationFrame(updateVideoTime);
+}
+
+function stopVideoTimeLoop() {
+  if (videoRafId === null) return;
+  cancelAnimationFrame(videoRafId);
+  videoRafId = null;
+}
+
+function setTargetVideoTime(video, time) {
+  const maxTime = Number.isFinite(video.duration) ? Math.min(video.duration, PAGE_2_VIDEO_END) : PAGE_2_VIDEO_END;
+  targetVideoTime = clamp(time, 0, maxTime);
+  document.documentElement.dataset.targetVideoTime = targetVideoTime.toFixed(3);
+}
+
+function setPageOneProgress(progress) {
+  const safeProgress = clamp(progress, 0, 1);
+  const videoTime = PAGE_1_VIDEO_START + (PAGE_1_VIDEO_END - PAGE_1_VIDEO_START) * safeProgress;
+
+  if (ENABLE_PAGE1_VIDEO_SCRUB) {
+    setTargetVideoTime(heroScrollVideo, videoTime);
+  }
+
+  if (ENABLE_PAGE1_ZOOM) {
+    const zoomScale = 1 + PAGE_1_ZOOM_AMOUNT * safeProgress;
+    document.documentElement.style.setProperty("--sceneScale", zoomScale.toFixed(4));
+  }
+}
+
+function initScrollDrivenVideo() {
+  if (!heroPage || !heroScrollVideo) return;
+
+  heroScrollVideo.pause();
+  document.documentElement.style.setProperty("--sceneScale", "1");
+  setVideoTime(heroScrollVideo, PAGE_1_VIDEO_START);
+  setPageOneProgress(0);
+  startVideoTimeLoop();
+
+  heroTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "#page1",
+      start: "top top",
+      end: () => `+=${scrollLengthToPixels(PAGE_1_SCROLL_LENGTH)}`,
+      scrub: true,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        setPageOneProgress(self.progress);
+      },
+      onLeave: () => {
+        setVideoTime(heroScrollVideo, PAGE_2_VIDEO_START);
+      },
+      onEnterBack: () => {
+        setVideoTime(heroScrollVideo, PAGE_2_VIDEO_START);
+      },
+      onLeaveBack: () => {
+        setPageOneProgress(0);
+      },
     },
+  });
 
-    // 从 page2 滚回 page1
-    onEnterBack: () => {
-      jumpBackToHeroStart();
+  heroTl.to({}, { duration: 1 });
+  ScrollTrigger.refresh();
+}
+
+function syncPageOneProgressFromScroll() {
+  if (!heroTl || !heroTl.scrollTrigger) return;
+  setPageOneProgress(heroTl.scrollTrigger.progress);
+}
+
+if (!ENABLE_LENIS_FOR_VIDEO_TEST) {
+  window.addEventListener(
+    "scroll",
+    () => {
+      ScrollTrigger.update();
+      syncPageOneProgressFromScroll();
     },
+    { passive: true }
+  );
+}
 
-    onLeaveBack: () => {
-      resetHeroToInitialState();
-    },
-  },
-});
+if (heroScrollVideo) {
+  heroScrollVideo.src = VIDEO_PATH;
+  heroScrollVideo.muted = true;
+  heroScrollVideo.playsInline = true;
+  heroScrollVideo.preload = "auto";
+  heroScrollVideo.addEventListener("loadedmetadata", initScrollDrivenVideo, { once: true });
+  heroScrollVideo.load();
 
-heroTl
-  .to(".hero-scene", { "--sceneScale": 1.08, ease: "none" }, 0)
-  .to(".hero-title-layer", { opacity: 0, y: -18, ease: "power2.inOut" }, 0.16)
-  .to(".hero-scene", { opacity: 0.9, ease: "power2.inOut" }, 0.34);
-
+  if (heroScrollVideo.readyState >= 1) {
+    initScrollDrivenVideo();
+  }
+}
 /* =========================================================
-   【这里是page1滚动动画时间线】替换结束
+   【这里是page1滚动驱动视频】替换结束
    ========================================================= */
 
 
@@ -219,6 +300,8 @@ heroTl
    【这里是对齐调试模式】替换开始
    ========================================================= */
 function setAlignmentMode(active) {
+  if (!heroTl) return;
+
   if (active) {
     heroTl.pause(0);
   } else {
@@ -303,8 +386,16 @@ document.querySelectorAll("[data-jump]").forEach((button) => {
   button.addEventListener("click", () => {
     closeModal(button.closest(".modal"));
 
-    lenis.scrollTo(button.dataset.jump, {
-      duration: 1.45,
+    if (lenis) {
+      lenis.scrollTo(button.dataset.jump, {
+        duration: 1.45,
+      });
+      return;
+    }
+
+    document.querySelector(button.dataset.jump)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
   });
 });
@@ -477,6 +568,8 @@ setAlignmentMode(!debugPanel.hidden);
    【这里是page1雪花生成逻辑】替换开始
    ========================================================= */
 function initSnow() {
+  if (ENABLE_PAGE1_VIDEO_SCRUB) return;
+
   const heroScene = document.querySelector(".hero-scene");
   if (!heroScene) return;
 
@@ -522,7 +615,7 @@ initSnow();
    【这里是运行状态标记】替换开始
    说明：用于确认 GSAP / Lenis / ScrollTrigger 已初始化。
    ========================================================= */
-document.documentElement.dataset.motionRuntime = "gsap-lenis-ready";
+document.documentElement.dataset.motionRuntime = lenis ? "gsap-lenis-ready" : "gsap-native-scroll-ready";
 document.documentElement.dataset.scrollTriggers = String(ScrollTrigger.getAll().length);
 /* =========================================================
    【这里是运行状态标记】替换结束
