@@ -40,27 +40,11 @@ const debugPanel = document.getElementById("debugPanel");
 
 
 /* =========================================================
-   【这里是page1视频层】替换开始
-   说明：创建 page1 的 hero 视频层。
-   视频路径：assets/videos/hero-video.mp4
+   【这里是page1根节点】替换开始
    ========================================================= */
 const heroPage = document.querySelector("#page1");
-
-const heroVideoLayer = document.createElement("div");
-heroVideoLayer.className = "hero-video-layer";
-heroVideoLayer.setAttribute("aria-hidden", "true");
-
-const heroVideo = document.createElement("video");
-heroVideo.className = "hero-video";
-heroVideo.src = "assets/videos/hero-video.mp4";
-heroVideo.muted = true;
-heroVideo.playsInline = true;
-heroVideo.preload = "auto";
-
-heroVideoLayer.appendChild(heroVideo);
-heroPage.appendChild(heroVideoLayer);
 /* =========================================================
-   【这里是page1视频层】替换结束
+   【这里是page1根节点】替换结束
    ========================================================= */
 
 
@@ -119,90 +103,14 @@ showHeroTitle();
 
 
 /* =========================================================
-   【这里是page1视频播放/重置函数】替换开始
-   说明：
-   - 向下滚动进入视频段时播放视频。
-   - 向上滚回 page1 顶部时重置视频。
+   【这里是page1初始状态重置】替换开始
+   说明：回到 page1 顶部时，标题图重新显示。
    ========================================================= */
-let heroVideoStarted = false;
-let heroVideoEnded = false;
 let heroInitialStateVisible = true;
 
-function setVideoSection(active) {
-  document.body.classList.toggle("is-video-section", active);
-}
-
-function playHeroVideo() {
-  if (heroVideoStarted || reduceMotion) return;
-
-  heroVideoStarted = true;
-  heroVideoEnded = false;
-  heroVideo.currentTime = 0;
-
-  const playPromise = heroVideo.play();
-
-  if (playPromise && typeof playPromise.catch === "function") {
-    playPromise.catch(() => {});
-  }
-}
-
-function resetHeroVideo() {
-  heroVideo.pause();
-
-  try {
-    heroVideo.currentTime = 0;
-  } catch (error) {
-    // 某些浏览器在视频还没 ready 时设置 currentTime 可能报错，忽略即可。
-  }
-
-  heroVideoStarted = false;
-  heroVideoEnded = false;
-}
-/* =========================================================
-   【这里是page1视频播放/重置函数】替换结束
-   ========================================================= */
-
-
-/* =========================================================
-   【这里是page1视频结束跳转】替换开始
-   说明：视频播放结束后，如果还停留在 page1，则自动滚到 page2。
-   ========================================================= */
-heroVideo.addEventListener("ended", () => {
-  heroVideoEnded = true;
-
-  const page2 = document.querySelector("#page2");
-  if (!page2) return;
-
-  const page2Top = page2.getBoundingClientRect().top + window.scrollY;
-
-  if (window.scrollY < page2Top - 20) {
-    lenis.scrollTo("#page2", {
-      duration: 1.25,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
-    });
-  }
-});
-/* =========================================================
-   【这里是page1视频结束跳转】替换结束
-   ========================================================= */
-
-
-/* =========================================================
-   【这里是page1初始状态重置】替换开始
-   说明：
-   - 解决问题 1：从 page2 往回滚 page1 时，不再停在视频最后一帧。
-   - 解决问题 2：回到 page1 顶部时，标题图重新显示。
-   ========================================================= */
 function resetHeroToInitialState() {
-  setVideoSection(false);
-  resetHeroVideo();
-
   gsap.set(".hero-scene", {
     opacity: 1,
-  });
-
-  gsap.set(".hero-video-layer", {
-    opacity: 0,
   });
 
   gsap.set(".hero-title-layer", {
@@ -231,8 +139,7 @@ function leaveHeroInitialState() {
    - page1 pin 住。
    - 湖面场景轻微放大。
    - 标题淡出。
-   - 视频层淡入。
-   - 从 page2 往回滚时，直接跳回 page1 初始画面，不经过视频最后一帧。
+   - 从 page2 往回滚时，直接跳回 page1 初始画面。
    ========================================================= */
 
 let isJumpingBackToHeroStart = false;
@@ -246,8 +153,6 @@ function jumpBackToHeroStart() {
 
   const heroTop = heroPage.getBoundingClientRect().top + window.scrollY;
 
-  // 先隐藏视频层，避免最后一帧闪烁
-  gsap.set(".hero-video-layer", { opacity: 0 });
   gsap.set(".hero-scene", { opacity: 1 });
   gsap.set(".hero-title-layer", { opacity: 1, y: 0 });
   showHeroTitle();
@@ -284,24 +189,9 @@ const heroTl = gsap.timeline({
         leaveHeroInitialState();
       }
 
-      setVideoSection(self.progress >= 0.24 && self.progress < 0.985);
-
-      // 向下滚动才播放视频
-      if (self.progress > 0.34 && self.direction > 0) {
-        playHeroVideo();
-      }
-
-      // 靠近开头时，视频重置
       if (self.progress < 0.08) {
-        resetHeroVideo();
-        setVideoSection(false);
-        gsap.set(".hero-video-layer", { opacity: 0 });
         gsap.set(".hero-scene", { opacity: 1 });
       }
-    },
-
-    onLeave: () => {
-      setVideoSection(false);
     },
 
     // 从 page2 滚回 page1
@@ -310,7 +200,6 @@ const heroTl = gsap.timeline({
     },
 
     onLeaveBack: () => {
-      setVideoSection(false);
       resetHeroToInitialState();
     },
   },
@@ -319,38 +208,10 @@ const heroTl = gsap.timeline({
 heroTl
   .to(".hero-scene", { "--sceneScale": 1.08, ease: "none" }, 0)
   .to(".hero-title-layer", { opacity: 0, y: -18, ease: "power2.inOut" }, 0.16)
-  .to(".hero-video-layer", { opacity: 1, ease: "power2.inOut" }, 0.24)
-  .to(".hero-scene", { opacity: 0, ease: "power2.inOut" }, 0.34)
-  .to(".hero-video-layer", { opacity: 1, ease: "none" }, 0.78);
+  .to(".hero-scene", { opacity: 0.9, ease: "power2.inOut" }, 0.34);
 
 /* =========================================================
    【这里是page1滚动动画时间线】替换结束
-   ========================================================= */
-
-
-/* =========================================================
-   【这里是page1船漂浮动画】替换开始
-   ========================================================= */
-gsap.to(":root", {
-  "--boatDriftX": "11px",
-  "--boatDriftY": "-7px",
-  "--boatDriftRotate": "1.6deg",
-  duration: 3.2,
-  repeat: -1,
-  yoyo: true,
-  ease: "sine.inOut",
-});
-
-gsap.to(":root", {
-  "--boatDriftX": "-7px",
-  duration: 4.7,
-  repeat: -1,
-  yoyo: true,
-  ease: "sine.inOut",
-  delay: 0.4,
-});
-/* =========================================================
-   【这里是page1船漂浮动画】替换结束
    ========================================================= */
 
 
@@ -561,12 +422,6 @@ const debugConfig = [
   { name: "lakeX", min: -700, max: 700, step: 1, unit: "px" },
   { name: "lakeY", min: -400, max: 400, step: 1, unit: "px" },
   { name: "lakeScale", min: 0.2, max: 3, step: 0.01, unit: "" },
-
-  { name: "boatX", min: -700, max: 700, step: 1, unit: "px" },
-  { name: "boatY", min: -60, max: 80, step: 0.5, unit: "vh" },
-  { name: "boatScale", min: 0.05, max: 3, step: 0.01, unit: "" },
-  { name: "boatOpacity", min: 0, max: 1, step: 0.01, unit: "" },
-  { name: "boatRotate", min: -30, max: 30, step: 0.5, unit: "deg" },
 
   { name: "sceneX", min: -700, max: 700, step: 1, unit: "px" },
   { name: "sceneY", min: -400, max: 400, step: 1, unit: "px" },

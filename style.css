@@ -20,23 +20,17 @@
   --global-nav-scale: 1;
   --global-nav-opacity: 1;
 
+  --scroll-down-bottom: 24px;
+  --scroll-down-scale: 1;
+  --scroll-down-opacity: 1;
+
   --lakeX: 0px;
   --lakeY: 0px;
   --lakeScale: 1;
 
-  --boatX: 98px;
-  --boatY: 9.5vh;
-  --boatScale: 1.55;
-  --boatOpacity: 1;
-  --boatRotate: 0deg;
-
   --sceneX: 0px;
   --sceneY: 0px;
   --sceneScale: 1;
-
-  --boatDriftX: 0px;
-  --boatDriftY: 0px;
-  --boatDriftRotate: 0deg;
 
   --ink: #f8efe6;
   --black: #030305;
@@ -226,8 +220,25 @@ button {
   pointer-events: none;
 }
 
+.global-scroll-down {
+  position: absolute;
+  left: 50%;
+  bottom: var(--scroll-down-bottom);
+  z-index: 105;
+  display: block;
+  width: clamp(118px, 12vw, 220px);
+  height: auto;
+  transform: translateX(-50%) scale(var(--scroll-down-scale));
+  transform-origin: center bottom;
+  opacity: var(--scroll-down-opacity);
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
 body.is-video-section .global-logo,
-body.is-video-section .global-nav {
+body.is-video-section .global-nav,
+body.is-video-section .global-scroll-down {
   opacity: 0;
   pointer-events: none;
 }
@@ -370,31 +381,6 @@ body.is-video-section .global-nav {
 
 
 /* =========================================================
-   【这里是page1视频层样式】替换开始
-   ========================================================= */
-.hero-video-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  opacity: 0;
-  overflow: hidden;
-  pointer-events: none;
-  background: #02040a;
-  will-change: opacity;
-}
-
-.hero-video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-/* =========================================================
-   【这里是page1视频层样式】替换结束
-   ========================================================= */
-
-
-/* =========================================================
    【这里是page1标题图样式】替换开始
    图片路径：assets/images/title_p1.png
    ========================================================= */
@@ -403,7 +389,8 @@ body.is-video-section .global-nav {
   inset: 0;
   z-index: 12;
   display: grid;
-  place-items: center;
+  align-items: center;
+  justify-items: start;
   padding: 0 24px;
   pointer-events: none;
   will-change: opacity, transform;
@@ -411,13 +398,13 @@ body.is-video-section .global-nav {
 
 .hero-title {
   display: block;
-  width: min(72vw, 820px);
-  max-height: 34vh;
+  width: min(79.2vw, 902px);
+  max-height: 37.4vh;
   height: auto;
   object-fit: contain;
   animation: titleEdgeGlow 0.5s ease-in-out 0.5s infinite alternate;
   filter:
-    brightness(0.6)
+    brightness(0.9)
     drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
     drop-shadow(0 0 0 rgba(150, 206, 255, 0));
 }
@@ -425,14 +412,14 @@ body.is-video-section .global-nav {
 @keyframes titleEdgeGlow {
   from {
     filter:
-      brightness(0.6)
+      brightness(0.9)
       drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
       drop-shadow(0 0 0 rgba(150, 206, 255, 0));
   }
 
   to {
     filter:
-      brightness(0.6)
+      brightness(0.9)
       drop-shadow(0 6px 18px rgba(0, 0, 0, 0.36))
       drop-shadow(0 0 28px rgba(150, 206, 255, 0.2));
   }
@@ -496,89 +483,6 @@ body.is-video-section .global-nav {
 }
 /* =========================================================
    【这里是page1雪花样式】替换结束
-   ========================================================= */
-
-
-/* =========================================================
-   【这里是page1船样式】替换开始
-   ========================================================= */
-.boat-position {
-  position: absolute;
-  inset: auto auto 6vh 50%;
-  z-index: 5;
-  width: min(58vw, 660px);
-  aspect-ratio: 1672 / 941;
-  transform: translateX(calc(-50% + var(--boatX))) translateY(var(--boatY)) scale(var(--boatScale));
-  transform-origin: 50% 78%;
-  opacity: var(--boatOpacity);
-  will-change: transform, opacity;
-}
-
-.boat-visual {
-  position: absolute;
-  inset: 0;
-  transform: translate(var(--boatDriftX), var(--boatDriftY)) rotate(calc(var(--boatRotate) + var(--boatDriftRotate)));
-  transform-origin: 50% 78%;
-  will-change: transform;
-}
-
-.boat-layer {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.55));
-}
-/* =========================================================
-   【这里是page1船样式】替换结束
-   ========================================================= */
-
-
-/* =========================================================
-   【这里是page1滚动提示样式】替换开始
-   ========================================================= */
-.scroll-cue {
-  position: absolute;
-  left: 50%;
-  bottom: 24px;
-  z-index: 8;
-  margin: 0;
-  transform: translateX(-50%);
-  opacity: 1;
-
-  color: rgba(255, 246, 230, 0.98);
-  font-family: "Andale Mono Local", "Andale Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-weight: 400;
-  letter-spacing: 0;
-  font-size: clamp(0.9rem, 2vw, 1rem);
-
-  text-shadow:
-    0 0 8px rgba(255, 246, 230, 0.35),
-    0 0 18px rgba(151, 197, 255, 0.28),
-    0 2px 8px rgba(0, 0, 0, 0.72);
-
-  animation: cueGlow 1.8s ease-in-out infinite;
-}
-
-@keyframes cueGlow {
-  0%,
-  100% {
-    filter: brightness(0.3);
-    text-shadow:
-      0 0 7px rgba(255, 246, 230, 0.24),
-      0 0 14px rgba(151, 197, 255, 0.18),
-      0 2px 8px rgba(0, 0, 0, 0.72);
-  }
-
-  50% {
-    filter: brightness(0.5);
-    text-shadow:
-      0 0 10px rgba(255, 246, 230, 0.44),
-      0 0 24px rgba(151, 197, 255, 0.34),
-      0 2px 8px rgba(0, 0, 0, 0.72);
-  }
-}
-/* =========================================================
-   【这里是page1滚动提示样式】替换结束
    ========================================================= */
 
 
@@ -936,12 +840,8 @@ summary:active,
   }
 
   .hero-title {
-    width: min(84vw, 460px);
-    max-height: 28vh;
-  }
-
-  .boat-position {
-    width: 84vw;
+    width: min(92.4vw, 506px);
+    max-height: 30.8vh;
   }
 
   .circles-stage {
